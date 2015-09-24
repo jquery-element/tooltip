@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<style>
+		body {
+			margin: 10px;
+			background: #222;
+			font: 12px sans-serif;
+		}
+		.square {
+			display: inline-block;
+			margin-top: 75px;
+			width: 14px;
+			height: 14px;
+			background: red;
+		}
+		.square.abs {
+			position: absolute;
+		}
+	</style>
+	<script src="//code.jquery.com/jquery-3.0.0-alpha1.min.js"></script>
+	<script src="../jquery-element/jquery-element.js"></script>
+	<script src="tooltip.js"></script>
+	<script>
+	</script>
+</head>	
+<body>
+
+<div
+	class="square"
+	data-jquery-element="tooltip"
+	data-tooltip-content="Hello World! :)"
+></div>
+
+<div
+	class="square"
+	data-jquery-element="tooltip"
+	data-tooltip-content="Hi! i'm <i>Mr21</i><br/>nice to meet you :)"
+></div>
+
+<div
+	class="square"
+	data-jquery-element="tooltip"
+	data-tooltip-content="Fine, &amp; <b>you</b>?"
+></div>
+
+<div
+	class="square abs"
+	style="right: 50px;"
+	data-jquery-element="tooltip"
+	data-tooltip-content="Great \o/"
+></div>
+
+<div
+	class="square abs"
+	style="right: 10px;"
+	data-jquery-element="tooltip"
+	data-tooltip-content="Fine, &amp; <b>you</b>?"
+></div>
+
+</body>
+</html>
