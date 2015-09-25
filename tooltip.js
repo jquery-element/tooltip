@@ -19,9 +19,9 @@ var
 ;
 
 function hideTooltip() {
-	jqTooltip.addClass( "hiding" );
+	jqTooltip.addClass( "tooltip-hiding" );
 	timeoutId = setTimeout( function() {
-		jqTooltip.addClass( "hidden" );
+		jqTooltip.addClass( "tooltip-hidden" );
 	}, hidingDuration );
 }
 
@@ -59,7 +59,7 @@ function showTooltip() {
 			left : x2,
 			top : y
 		})
-		.removeClass( "hiding hidden" )
+		.removeClass( "tooltip-hiding tooltip-hidden" )
 	;
 }
 
@@ -77,10 +77,10 @@ jQuery.element({
 			transition-property: visibility, opacity;\
 			transition-duration: .2s;\
 		}\
-		.tooltip.hiding {\
+		.tooltip-hiding {\
 			opacity: 0;\
 		}\
-		.tooltip.hidden {\
+		.tooltip-hidden {\
 			display: none;\
 		}\
 		.tooltip-content {\
