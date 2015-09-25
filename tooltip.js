@@ -33,23 +33,17 @@ $( function() {
 
 function showTooltip() {
 	clearTimeout( timeoutId );
-
-	var
-		scrW = jqWindow.width(),
-		elW = this.outerWidth(),
-		elH = this.outerHeight(),
-		elPos = this.offset(),
-		x, x2,
-		y
-	;
-
 	jqTooltip.css( cssPosReset );
 	jqTooltipContent.html( this.data( "tooltipContent" ) );
 
 	var
-		w = jqTooltip.width(),
+		scrW = jqWindow.width(),
+		elW = this.outerWidth(),
+		elPos = this.offset(),
 		oW = jqTooltip.outerWidth(),
-		oH = jqTooltip.outerHeight()
+		oH = jqTooltip.outerHeight(),
+		x, x2,
+		y
 	;
 
 	x = elPos.left - oW / 2 + elW / 2;
@@ -96,7 +90,6 @@ jQuery.element({
 		.tooltip-arrow {\
 			position: absolute;\
 			top: 100%;\
-			left: 50%;\
 			width: 8px;\
 			height: 8px;\
 			margin: -4px;\
