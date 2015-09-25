@@ -8,18 +8,21 @@
 		background: #222;
 		font: 12px sans-serif;
 	}
-	.square {
+	.rect {
 		display: inline-block;
 		margin-top: 75px;
-		width: 14px;
+		width: 140px;
 		height: 14px;
 		background: #f33;
 	}
-	.square.abs {
+	.rect.abs {
 		position: absolute;
 	}
-	.square.callingFn {
-		background: #a8f;
+	.rect.callingFn {
+		background: #f66;
+	}
+	.rect.square {
+		width: 14px;
 	}
 </style>
 <script src="//code.jquery.com/jquery-3.0.0-alpha1.min.js"></script>
@@ -42,41 +45,56 @@ window.tooltipContent_a = function() {
 <body>
 
 <div
-	class="square"
+	class="rect square"
 	data-jquery-element="tooltip"
 	data-tooltip-content-string="Hello World! :)"
 ></div>
 
 <div
-	class="square"
+	class="rect square"
 	data-jquery-element="tooltip"
 	data-tooltip-content-string="Hi! i'm <i>Mr21</i><br/>nice to meet you :)"
 ></div>
 
 <div
-	class="square"
+	class="rect square"
 	data-jquery-element="tooltip"
 	data-tooltip-content-string="Fine, &amp; <b>you</b>?"
 ></div>
 
 <div
-	class="square abs"
+	class="rect square callingFn kikoo"
+	data-jquery-element="tooltip"
+	data-tooltip-content-function="tooltipContent_a"
+></div>
+
+<br/>
+<div
+	class="rect"
+	data-jquery-element="tooltip"
+	data-tooltip-content-string="not followMouseX"
+></div>
+
+<br/>
+<div
+	class="rect"
+	data-jquery-element="tooltip"
+	data-tooltip-follow-mouse="x"
+	data-tooltip-content-string="followMouseX"
+></div>
+
+<div
+	class="rect square abs"
 	style="right: 50px;"
 	data-jquery-element="tooltip"
 	data-tooltip-content-string="Great \o/"
 ></div>
 
 <div
-	class="square abs"
+	class="rect square abs"
 	style="right: 10px;"
 	data-jquery-element="tooltip"
 	data-tooltip-content-string="Fine, &amp; <b>you</b>?"
-></div>
-
-<div
-	class="square callingFn kikoo"
-	data-jquery-element="tooltip"
-	data-tooltip-content-function="tooltipContent_a"
 ></div>
 
 </body>

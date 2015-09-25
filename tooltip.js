@@ -15,8 +15,8 @@ var
 	jqTooltip00 = jqTooltip.clone(),
 	jqTooltip00Content = jqTooltip00.find( ".tooltip-content" ),
 
-	tooltipLeft,
-	tooltipTop,
+	tooltipX,
+	tooltipY,
 	tooltipW,
 	tooltipH,
 
@@ -54,6 +54,11 @@ function getContent( jqElem ) {
 	;
 }
 
+function getFollowDir( jqEl ) {
+	var d = jqEl.data( "tooltipFollowMouse" );
+	return d && d.toLowerCase();
+}
+
 function updateDimensions( jqEl ) {
 	var
 		content = getContent( jqEl )
@@ -63,40 +68,61 @@ function updateDimensions( jqEl ) {
 	tooltipH = jqTooltip00.outerHeight();
 }
 
-function positionToolTip( x, y ) {
+function positionTooltip( x, y ) {
 	var
 		scrW = jqWindow.width(),
 		x2 = Math.min( Math.max( 0, x ), scrW - tooltipW )
 	;
+	tooltipX = x;
+	tooltipY = y;
 	jqTooltipArrow
 		.css( "left", ( 50 - ( x2 - x ) / tooltipW * 100 ) + "%" )
 	;
 	jqTooltip
 		.css( {
-			left : tooltipLeft = x2,
-			top  : tooltipTop  = y
+			left : x2,
+			top : y
 		})
 	;
 }
 
-function positionToolTipCenter( jqEl ) {
-	var
-		elW = jqEl.outerWidth(),
-		elPos = jqEl.offset()
-	;
-	positionToolTip(
-		elPos.left - tooltipW / 2 + elW / 2,
-		elPos.top  - tooltipH - 15
-	);
+function positionTooltipCenter( jqEl ) {
+
 }
 
-function showTooltip() {
+function moveTooltip( e ) {
+	e = e.originalEvent;
+	switch ( getFollowDir( this ) ) {
+		case "x": return positionTooltip( tooltipX + e.movementX, tooltipY );
+		case "y": return positionTooltip( tooltipX, tooltipY + e.movementY );
+	}
+}
+
+function showTooltip( e ) {
+	e = e.originalEvent;
 	var content = getContent( this );
 	if ( content ) {
 		clearTimeout( timeoutId );
 		jqTooltip.css( cssPosReset );
 		updateDimensions( this );
-		positionToolTipCenter( this );
+
+		var
+			elPos = this.offset(),
+			x = elPos.left - tooltipW / 2,
+			y = elPos.top - tooltipH - 15
+		;
+		switch ( getFollowDir( this ) ) {
+			case "x":
+				x += e.offsetX;
+				break;
+			case "y":
+				y += e.offsetY;
+				break;
+			default:
+				x += this.outerWidth() / 2;
+		}
+		positionTooltip( x, y );
+
 		jqTooltipContent.html( content );
 		jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
 	}
@@ -137,9 +163,13 @@ jQuery.element({
 		}\
 	",
 	init: function() {
-		this.jqElement
-			.mouseenter( showTooltip.bind( this.jqElement ) )
+		var
+			jqEl = this.jqElement
+		;
+		jqEl
+			.mouseenter( showTooltip.bind( jqEl ) )
 			.mouseleave( hideTooltip )
+			.mousemove( moveTooltip.bind( jqEl ) )
 		;
 	}
 });
