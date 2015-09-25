@@ -12,11 +12,17 @@ var
 	jqTooltip = $( "<span class='tooltip'>" ),
 	jqTooltipArrow = $( "<div class='tooltip-arrow'>" ).appendTo( jqTooltip ),
 	jqTooltipContent = $( "<div class='tooltip-content'>" ).appendTo( jqTooltip ),
-	cssReset = { display: "inline-block", width: "auto", left: 0, top: 0 }
+
+	cssPosReset = { left: 0, top: 0 },
+	hidingDuration = 200,
+	timeoutId
 ;
 
 function hideTooltip() {
-	jqTooltip.addClass( "hidden" );
+	jqTooltip.addClass( "hiding" );
+	timeoutId = setTimeout( function() {
+		jqTooltip.addClass( "hidden" );
+	}, hidingDuration );
 }
 
 hideTooltip();
@@ -26,6 +32,8 @@ $( function() {
 });
 
 function showTooltip() {
+	clearTimeout( timeoutId );
+
 	var
 		scrW = jqWindow.width(),
 		elW = this.outerWidth(),
@@ -35,7 +43,7 @@ function showTooltip() {
 		y
 	;
 
-	jqTooltip.css( cssReset );
+	jqTooltip.css( cssPosReset );
 	jqTooltipContent.html( this.data( "tooltipContent" ) );
 
 	var
@@ -54,12 +62,10 @@ function showTooltip() {
 
 	jqTooltip
 		.css( {
-			display : "block",
-			width : w,
 			left : x2,
 			top : y
 		})
-		.removeClass( "hidden" )
+		.removeClass( "hiding hidden" )
 	;
 }
 
@@ -77,9 +83,11 @@ jQuery.element({
 			transition-property: visibility, opacity;\
 			transition-duration: .2s;\
 		}\
-		.tooltip.hidden {\
-			visibility: hidden;\
+		.tooltip.hiding {\
 			opacity: 0;\
+		}\
+		.tooltip.hidden {\
+			display: none;\
 		}\
 		.tooltip-content {\
 			position: relative;\
