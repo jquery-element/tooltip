@@ -34,7 +34,7 @@ $( function() {
 function showTooltip() {
 	content = this.data( "tooltipContentFunction" );
 	content = content
-		? window[ content ]()
+		? window[ content ].call( this )
 		: this.data( "tooltipContentString" )
 	;
 

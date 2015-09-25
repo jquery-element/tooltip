@@ -31,8 +31,9 @@ function lg(s) { console.log(s); }
 
 window.tooltipContent_a = function() {
 	return (
-		"Content received<br/>"+
-		"by a <b>function</b>!"
+		"Content received<br/>" +
+		"by a <b>function</b><br/>" +
+		"<i>" + this.attr( "class" ) + "</i>"
 	);
 };
 
@@ -73,7 +74,7 @@ window.tooltipContent_a = function() {
 ></div>
 
 <div
-	class="square callingFn"
+	class="square callingFn kikoo"
 	data-jquery-element="tooltip"
 	data-tooltip-content-function="tooltipContent_a"
 ></div>
