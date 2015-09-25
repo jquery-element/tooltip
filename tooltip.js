@@ -12,6 +12,13 @@ var
 	jqTooltip = $( "<span class='tooltip'>" ),
 	jqTooltipArrow = $( "<div class='tooltip-arrow'>" ).appendTo( jqTooltip ),
 	jqTooltipContent = $( "<div class='tooltip-content'>" ).appendTo( jqTooltip ),
+	jqTooltip00 = jqTooltip.clone(),
+	jqTooltip00Content = jqTooltip00.find( ".tooltip-content" ),
+
+	tooltipLeft,
+	tooltipTop,
+	tooltipW,
+	tooltipH,
 
 	cssPosReset = { left: 0, top: 0 },
 	hidingDuration = 0,
@@ -26,49 +33,72 @@ function hideTooltip() {
 }
 
 hideTooltip();
-
 $( function() {
 	jqTooltip.appendTo( "body" );
+	jqTooltip00
+		.css( {
+			display: "none",
+			left: 0,
+			top: 0
+		})
+		.appendTo( "body" )
+	;
 	hidingDuration = 1000 * parseFloat( jqTooltip.css( "transition-duration" ) );
 });
 
-function showTooltip() {
-	content = this.data( "tooltipContentFunction" );
-	content = content
-		? window[ content ].call( this )
-		: this.data( "tooltipContentString" )
+function getContent( jqElem ) {
+	var c = jqElem.data( "tooltipContentFunction" );
+	return c
+		? window[ c ].call( jqElem )
+		: jqElem.data( "tooltipContentString" )
 	;
+}
 
+function updateDimensions( jqEl ) {
+	var
+		content = getContent( jqEl )
+	;
+	jqTooltip00Content.html( content );
+	tooltipW = jqTooltip00.outerWidth();
+	tooltipH = jqTooltip00.outerHeight();
+}
+
+function positionToolTip( x, y ) {
+	var
+		scrW = jqWindow.width(),
+		x2 = Math.min( Math.max( 0, x ), scrW - tooltipW )
+	;
+	jqTooltipArrow
+		.css( "left", ( 50 - ( x2 - x ) / tooltipW * 100 ) + "%" )
+	;
+	jqTooltip
+		.css( {
+			left : tooltipLeft = x2,
+			top  : tooltipTop  = y
+		})
+	;
+}
+
+function positionToolTipCenter( jqEl ) {
+	var
+		elW = jqEl.outerWidth(),
+		elPos = jqEl.offset()
+	;
+	positionToolTip(
+		elPos.left - tooltipW / 2 + elW / 2,
+		elPos.top  - tooltipH - 15
+	);
+}
+
+function showTooltip() {
+	var content = getContent( this );
 	if ( content ) {
 		clearTimeout( timeoutId );
 		jqTooltip.css( cssPosReset );
+		updateDimensions( this );
+		positionToolTipCenter( this );
 		jqTooltipContent.html( content );
-
-		var
-			content,
-			scrW = jqWindow.width(),
-			elW = this.outerWidth(),
-			elPos = this.offset(),
-			oW = jqTooltip.outerWidth(),
-			oH = jqTooltip.outerHeight(),
-			x, x2,
-			y
-		;
-
-		x = elPos.left - oW / 2 + elW / 2;
-		y = elPos.top  - oH - 15;
-		x2 = Math.min( Math.max( 0, x ), scrW - oW );
-
-		jqTooltipArrow
-			.css( "left", ( 50 - ( x2 - x ) / oW * 100 ) + "%" )
-		;
-		jqTooltip
-			.css( {
-				left : x2,
-				top : y
-			})
-			.removeClass( "tooltip-hiding tooltip-hidden" )
-		;
+		jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
 	}
 }
 
