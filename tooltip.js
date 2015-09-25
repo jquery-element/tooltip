@@ -32,35 +32,43 @@ $( function() {
 });
 
 function showTooltip() {
-	clearTimeout( timeoutId );
-	jqTooltip.css( cssPosReset );
-	jqTooltipContent.html( this.data( "tooltipContent" ) );
-
-	var
-		scrW = jqWindow.width(),
-		elW = this.outerWidth(),
-		elPos = this.offset(),
-		oW = jqTooltip.outerWidth(),
-		oH = jqTooltip.outerHeight(),
-		x, x2,
-		y
+	content = this.data( "tooltipContentFunction" );
+	content = content
+		? window[ content ]()
+		: this.data( "tooltipContentString" )
 	;
 
-	x = elPos.left - oW / 2 + elW / 2;
-	y = elPos.top  - oH - 15;
-	x2 = Math.min( Math.max( 0, x ), scrW - oW );
+	if ( content ) {
+		clearTimeout( timeoutId );
+		jqTooltip.css( cssPosReset );
+		jqTooltipContent.html( content );
 
-	jqTooltipArrow
-		.css( "left", ( 50 - ( x2 - x ) / oW * 100 ) + "%" )
-	;
+		var
+			content,
+			scrW = jqWindow.width(),
+			elW = this.outerWidth(),
+			elPos = this.offset(),
+			oW = jqTooltip.outerWidth(),
+			oH = jqTooltip.outerHeight(),
+			x, x2,
+			y
+		;
 
-	jqTooltip
-		.css( {
-			left : x2,
-			top : y
-		})
-		.removeClass( "tooltip-hiding tooltip-hidden" )
-	;
+		x = elPos.left - oW / 2 + elW / 2;
+		y = elPos.top  - oH - 15;
+		x2 = Math.min( Math.max( 0, x ), scrW - oW );
+
+		jqTooltipArrow
+			.css( "left", ( 50 - ( x2 - x ) / oW * 100 ) + "%" )
+		;
+		jqTooltip
+			.css( {
+				left : x2,
+				top : y
+			})
+			.removeClass( "tooltip-hiding tooltip-hidden" )
+		;
+	}
 }
 
 jQuery.element({
