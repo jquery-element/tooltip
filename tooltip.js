@@ -14,7 +14,7 @@ var
 	jqTooltipContent = $( "<div class='tooltip-content'>" ).appendTo( jqTooltip ),
 
 	cssPosReset = { left: 0, top: 0 },
-	hidingDuration = 200,
+	hidingDuration = 0,
 	timeoutId
 ;
 
@@ -29,6 +29,7 @@ hideTooltip();
 
 $( function() {
 	jqTooltip.appendTo( "body" );
+	hidingDuration = 1000 * parseFloat( jqTooltip.css( "transition-duration" ) );
 });
 
 function showTooltip() {
