@@ -3,9 +3,9 @@
 	https://github.com/jquery-element/tooltip
 */
 
-function lg(s) {console.log(s)}
-
 (function() {
+
+"use strict";
 
 var
 	jqWindow = $( window ),
