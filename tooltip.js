@@ -168,6 +168,7 @@ jQuery.element({
 	css: "\
 		.tooltip {\
 			position: absolute;\
+			z-index: 2147483647;\
 			display: inline-block;\
 			padding: 7px 10px;\
 			border-radius: 3px;\
