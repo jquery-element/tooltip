@@ -71,7 +71,6 @@ function getSide( jqEl ) {
 
 function positionTooltip( x, y ) {
 	var
-		tmp,
 		prop,
 		value
 	;
@@ -81,14 +80,12 @@ function positionTooltip( x, y ) {
 
 	if ( currSide === "top" || currSide === "bottom" ) {
 		prop = "left";
-		tmp = Math.min( Math.max( 0, x ), jqWindow.width() - tooltipW );
-		value = ( tmp - x ) / tooltipW;
-		x = tmp;
+		x = Math.min( Math.max( 0, x ), jqWindow.width() - tooltipW );
+		value = ( x - tooltipX ) / tooltipW;
 	} else {
 		prop = "top";
-		tmp = Math.min( Math.max( 0, y ), jqWindow.height() - tooltipH );
-		value = ( tmp - y ) / tooltipH;
-		y = tmp;
+		y = Math.min( Math.max( 0, y ), jqWindow.height() - tooltipH );
+		value = ( y - tooltipY ) / tooltipH;
 	}
 
 	jqTooltipArrow.css(
