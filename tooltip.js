@@ -23,7 +23,8 @@ var
 	tooltipH,
 
 	currSide = "top",
-	cssPosReset = { left: 0, top: 0 },
+	cssPosReset = { top: "auto", right: "auto", bottom: "auto", left: "auto" },
+	cssPosReset00 = { top: 0, left: 0 },
 	hidingDuration = 0,
 	timeoutId
 ;
@@ -113,19 +114,14 @@ function positionByOffset( jqEl, offsetX, offsetY ) {
 	tooltipW = jqTooltip00.outerWidth();
 	tooltipH = jqTooltip00.outerHeight();
 
-	jqTooltip
-		.removeClass( "tooltip-" + currSide )
-		.addClass( "tooltip-" + side )
-	;
 	if ( currSide !== side ) {
-		jqTooltipArrow.css( {
-			top: "auto",
-			right: "auto",
-			bottom: "auto",
-			left: "auto"
-		});
+		jqTooltip
+			.removeClass( "tooltip-" + currSide )
+			.addClass( "tooltip-" + side )
+		;
+		jqTooltipArrow.css( cssPosReset );
+		currSide = side;
 	}
-	currSide = side;
 
 	if ( side === "top" || side === "bottom" ) {
 		x += offsetX - tooltipW / 2;
@@ -151,7 +147,7 @@ function showTooltip( e ) {
 	e = e.originalEvent;
 	if ( getContent( this ) ) {
 		clearTimeout( timeoutId );
-		jqTooltip.css( cssPosReset );
+		jqTooltip.css( cssPosReset00 );
 		var
 			offset = this.offset(),
 			isFollow = isFollowingMouse( this )
