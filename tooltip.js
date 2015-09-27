@@ -22,6 +22,7 @@ var
 	tooltipW,
 	tooltipH,
 
+	arrowSize,
 	margin = 15,
 	currSide = "top",
 	cssPosReset = { top: "auto", right: "auto", bottom: "auto", left: "auto" },
@@ -48,6 +49,7 @@ $( function() {
 		})
 		.appendTo( "body" )
 	;
+	arrowSize = jqTooltipArrow.outerWidth() / 2 + 1;
 	hidingDuration = 1000 * parseFloat( jqTooltip.css( "transition-duration" ) );
 });
 
@@ -72,7 +74,8 @@ function getSide( jqEl ) {
 function positionTooltip( x, y ) {
 	var
 		prop,
-		value
+		value,
+		scr
 	;
 
 	tooltipX = x;
@@ -80,18 +83,23 @@ function positionTooltip( x, y ) {
 
 	if ( currSide === "top" || currSide === "bottom" ) {
 		prop = "left";
-		x = Math.min( Math.max( 0, x ), jqWindow.width() - tooltipW );
-		value = ( x - tooltipX ) / tooltipW;
+		scr = jqWindow.width();
+		x = Math.min( Math.max( 0, x ), scr - tooltipW );
+		value = Math.min(
+			tooltipX + tooltipW / 2,
+			scr - arrowSize
+		) - x;
 	} else {
 		prop = "top";
-		y = Math.min( Math.max( 0, y ), jqWindow.height() - tooltipH );
-		value = ( y - tooltipY ) / tooltipH;
+		scr = jqWindow.height();
+		y = Math.min( Math.max( 0, y ), scr - tooltipH );
+		value = Math.min(
+			tooltipY + tooltipH / 2,
+			scr - arrowSize
+		) - y;
 	}
 
-	jqTooltipArrow.css(
-		prop,
-		( 50 - value * 100 ) + "%"
-	);
+	jqTooltipArrow.css( prop, value );
 	jqTooltip
 		.css( {
 			left : x,
