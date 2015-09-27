@@ -22,6 +22,7 @@ var
 	tooltipW,
 	tooltipH,
 
+	margin = 15,
 	currSide = "top",
 	cssPosReset = { top: "auto", right: "auto", bottom: "auto", left: "auto" },
 	cssPosReset00 = { top: 0, left: 0 },
@@ -126,16 +127,16 @@ function positionByOffset( jqEl, offsetX, offsetY ) {
 	if ( side === "top" || side === "bottom" ) {
 		x += offsetX - tooltipW / 2;
 		if ( side === "top" ) {
-			y -= 15 + tooltipH;
+			y -= margin + tooltipH;
 		} else {
-			y += 15 + jqEl.outerHeight();
+			y += margin + jqEl.outerHeight();
 		}
 	} else {
 		y += offsetY - tooltipH / 2;
 		if ( side === "left" ) {
-			x -= 15 + tooltipW;
+			x -= margin + tooltipW;
 		} else {
-			x += 15 + jqEl.outerWidth();
+			x += margin + jqEl.outerWidth();
 		}
 	}
 
@@ -144,8 +145,8 @@ function positionByOffset( jqEl, offsetX, offsetY ) {
 }
 
 function showTooltip( e ) {
-	e = e.originalEvent;
 	if ( getContent( this ) ) {
+		e = e.originalEvent;
 		clearTimeout( timeoutId );
 		jqTooltip.css( cssPosReset00 );
 		var
