@@ -22,6 +22,7 @@
 
 	.directions {
 		position: absolute;
+		text-align: center;
 	}
 	.directions > div {
 		display: inline-block;
@@ -29,7 +30,6 @@
 		width: 50px;
 		padding: 10px;
 		font-weight: bold;
-		text-align: center;
 		border-radius: 4px;
 		background: #ddf;
 		color: #222;
@@ -44,11 +44,16 @@
 
 function lg(s) { console.log(s); }
 
-window.tooltipContent_a = function() {
+window.tooltipContent = function( event ) {
+	event = event.originalEvent;
+	var side = this.data( "tooltipSide" );
 	return (
-		"Content received<br/>" +
-		"by a <b>function</b><br/>" +
-		"<i>" + this.attr( "class" ) + "</i>"
+		"Content received by a <b>function</b>&nbsp:<br/>" +
+		(
+			side === "top" || side === "bottom"
+			? "event.offsetX : " + event.offsetX
+			: "event.offsetY : " + event.offsetY
+		)
 	);
 };
 
@@ -115,10 +120,7 @@ window.tooltipContent_a = function() {
 	data-jquery-element="tooltip"
 	data-tooltip-side="right"
 	data-tooltip-followmouse="true"
-	data-tooltip-content-string='
-		data-<b>tooltip-side</b>="<b>right</b>"<br/>
-		data-<b>tooltip-followmouse</b>="<b>true</b>"
-	'
+	data-tooltip-content-function="tooltipContent"
 ></div>
 
 <span class="abs" style="right: 10px; bottom: 166px;">
@@ -132,10 +134,7 @@ window.tooltipContent_a = function() {
 	data-jquery-element="tooltip"
 	data-tooltip-side="top"
 	data-tooltip-followmouse="true"
-	data-tooltip-content-string='
-		data-<b>tooltip-side</b>="<b>top</b>"<br/>
-		data-<b>tooltip-followmouse</b>="<b>true</b>"
-	'
+	data-tooltip-content-function="tooltipContent"
 ></div>
 
 </body>

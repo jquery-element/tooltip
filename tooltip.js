@@ -51,10 +51,10 @@ $( function() {
 	hidingDuration = 1000 * parseFloat( jqTooltip.css( "transition-duration" ) );
 });
 
-function getContent( jqElem ) {
+function getContent( jqElem, e ) {
 	var c = jqElem[ 0 ].dataset[ "tooltipContentFunction" ];
 	return c
-		? window[ c ].call( jqElem )
+		? window[ c ].call( jqElem, e )
 		: jqElem[ 0 ].dataset[ "tooltipContentString" ]
 	;
 }
@@ -100,9 +100,9 @@ function positionTooltip( x, y ) {
 	;
 }
 
-function positionByOffset( jqEl, offsetX, offsetY ) {
+function positionByOffset( jqEl, event, offsetX, offsetY ) {
 	var
-		content = getContent( jqEl ),
+		content = getContent( jqEl, event ),
 		x = elementX,
 		y = elementY,
 		side = getSide( jqEl )
@@ -141,9 +141,8 @@ function positionByOffset( jqEl, offsetX, offsetY ) {
 	jqTooltipContent.html( content );
 }
 
-function showTooltip( e ) {
-	if ( getContent( this ) ) {
-		e = e.originalEvent;
+function showTooltip( event ) {
+	if ( getContent( this, event ) ) {
 		clearTimeout( timeoutId );
 		jqTooltip.css( cssPosReset00 );
 		var
@@ -152,9 +151,9 @@ function showTooltip( e ) {
 		;
 		elementX = offset.left;
 		elementY = offset.top;
-		positionByOffset( this,
-			isFollow ? e.offsetX : this.outerWidth() / 2,
-			isFollow ? e.offsetY : this.outerHeight() / 2
+		positionByOffset( this, event,
+			isFollow ? event.originalEvent.offsetX : this.outerWidth() / 2,
+			isFollow ? event.originalEvent.offsetY : this.outerHeight() / 2
 		);
 		jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
 	}
@@ -205,12 +204,11 @@ jQuery.element({
 		jqEl
 			.mouseenter( showTooltip.bind( jqEl ) )
 			.mouseleave( hideTooltip )
-			.mousemove( function( e ) {
+			.mousemove( function( event ) {
 				if ( isFollowingMouse( jqEl ) ) {
-					e = e.originalEvent;
-					return positionByOffset( jqEl,
-						e.offsetX,
-						e.offsetY
+					return positionByOffset( jqEl, event,
+						event.originalEvent.offsetX,
+						event.originalEvent.offsetY
 					);
 				}
 			})
