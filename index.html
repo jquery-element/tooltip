@@ -6,16 +6,24 @@
 	body {
 		background: #222;
 		font: 12px sans-serif;
+		color: #ddd;
+	}
+	.abs {
+		position: absolute;
 	}
 	.rect {
-		position: absolute;
 		background: #f33;
+		opacity: .8;
+	}
+	.rect:hover {
+		z-index: 1;
+		opacity: 1;
 	}
 
 	.directions {
 		position: absolute;
 	}
-	.directions > * {
+	.directions > div {
 		display: inline-block;
 		margin: 10px;
 		width: 50px;
@@ -24,6 +32,7 @@
 		text-align: center;
 		border-radius: 4px;
 		background: #ddf;
+		color: #222;
 		cursor: default;
 	}
 
@@ -45,9 +54,10 @@ window.tooltipContent_a = function() {
 
 </script>
 </head>	
-<body data-toto>
+<body>
 
 <div class="directions" style="right: 250px; top: 40px;">
+	<code>data-<b>tooltip-followmouse</b>="<b>false</b>"</code><br/>
 	<div
 		data-jquery-element="tooltip"
 		data-tooltip-content-string="Top"
@@ -71,6 +81,7 @@ window.tooltipContent_a = function() {
 </div>
 
 <div class="directions" style="right: 250px; top: 200px;">
+	<code>data-<b>tooltip-followmouse</b>="<b>true</b>"</code><br/>
 	<div
 		data-jquery-element="tooltip"
 		data-tooltip-side="top"
@@ -99,8 +110,8 @@ window.tooltipContent_a = function() {
 </div>
 
 <div
-	class="rect"
-	style="position: absolute; width: 20px; left: 200px; top: 5px; bottom: 5px;"
+	class="abs rect"
+	style="width: 20px; left: 200px; top: 0; bottom: 0;"
 	data-jquery-element="tooltip"
 	data-tooltip-side="right"
 	data-tooltip-followmouse="true"
@@ -110,9 +121,14 @@ window.tooltipContent_a = function() {
 	'
 ></div>
 
+<span class="abs" style="right: 10px; bottom: 166px;">
+	Move your mouse here to see the little<br/>
+	arrow acting on the edge of the window.
+</span>
+
 <div
-	class="rect"
-	style="position: absolute; height: 20px; left: 5px; right: 5px; bottom: 200px;"
+	class="abs rect"
+	style="height: 20px; left: 0; right: 0; bottom: 200px;"
 	data-jquery-element="tooltip"
 	data-tooltip-side="top"
 	data-tooltip-followmouse="true"
