@@ -52,10 +52,6 @@ function showTooltip( jqEl, e ) {
 	function up() {
 		var content = getContent( jqEl );
 		if ( content && content !== currContent ) {
-			if ( isHidden ) {
-				isHidden = false;
-				jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
-			}
 			update( jqEl );
 		}
 	}
@@ -68,7 +64,7 @@ function hideTooltip() {
 	clearTimeout( intervalIdWatchContent );
 	jqTooltip.addClass( "tooltip-hiding" );
 	isHidden = true;
-	currContent = null;
+	currContent = "";
 	timeoutIdHidding = setTimeout( function() {
 		jqTooltip.addClass( "tooltip-hidden" );
 	}, hidingDuration );
@@ -149,6 +145,11 @@ function update( jqEl ) {
 		x,
 		y
 	;
+
+	if ( isHidden ) {
+		isHidden = false;
+		jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
+	}
 
 	if ( contentChanged ) {
 		jqTooltip00Content.html( currContent = cnt );
