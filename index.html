@@ -41,24 +41,6 @@
 <script src="//code.jquery.com/jquery-3.0.0-alpha1.min.js"></script>
 <script src="../jquery-element/jquery-element.js"></script>
 <script src="tooltip.js"></script>
-<script>
-
-function lg( s ) { console.log( s ); }
-
-window.tooltipContent = function( event ) {
-	event = event.originalEvent;
-	var side = this.data( "tooltipSide" );
-	return (
-		"Content received<br/>by a <b>function</b>&nbsp:<br/>" +
-		(
-			side === "top" || side === "bottom"
-			? "event.offsetX : " + event.offsetX
-			: "event.offsetY : " + event.offsetY
-		)
-	);
-};
-
-</script>
 </head>	
 <body>
 
@@ -66,23 +48,23 @@ window.tooltipContent = function( event ) {
 	<code>data-<b>tooltip-followmouse</b>="<b>false</b>"</code><br/>
 	<div
 		data-jquery-element="tooltip"
-		data-tooltip-content-string="Top"
+		data-tooltip-content="Top"
 	>Top</div
 	><div
 		data-jquery-element="tooltip"
 		data-tooltip-side="right"
-		data-tooltip-content-string="Right"
+		data-tooltip-content="Right"
 	>Right</div>
 	<br/>
 	<div
 		data-jquery-element="tooltip"
 		data-tooltip-side="left"
-		data-tooltip-content-string="Left"
+		data-tooltip-content="Left"
 	>Left</div
 	><div
 		data-jquery-element="tooltip"
 		data-tooltip-side="bottom"
-		data-tooltip-content-string="Bottom"
+		data-tooltip-content="Bottom"
 	>Bottom</div>
 </div>
 
@@ -90,28 +72,26 @@ window.tooltipContent = function( event ) {
 	<code>data-<b>tooltip-followmouse</b>="<b>true</b>"</code><br/>
 	<div
 		data-jquery-element="tooltip"
-		data-tooltip-side="top"
 		data-tooltip-followmouse="true"
-		data-tooltip-content-string="Top"
 	>Top</div
 	><div
 		data-jquery-element="tooltip"
 		data-tooltip-side="right"
 		data-tooltip-followmouse="true"
-		data-tooltip-content-string="Right"
+		data-tooltip-content="Right"
 	>Right</div>
 	<br/>
 	<div
 		data-jquery-element="tooltip"
 		data-tooltip-side="left"
 		data-tooltip-followmouse="true"
-		data-tooltip-content-string="Left"
+		data-tooltip-content="Left"
 	>Left</div
 	><div
 		data-jquery-element="tooltip"
 		data-tooltip-side="bottom"
 		data-tooltip-followmouse="true"
-		data-tooltip-content-string="Bottom"
+		data-tooltip-content="Bottom"
 	>Bottom</div>
 </div>
 
@@ -121,7 +101,6 @@ window.tooltipContent = function( event ) {
 	data-jquery-element="tooltip"
 	data-tooltip-side="right"
 	data-tooltip-followmouse="true"
-	data-tooltip-content-function="tooltipContent"
 ></div>
 
 <span class="abs" style="right: 10px; bottom: 166px;">
@@ -135,8 +114,43 @@ window.tooltipContent = function( event ) {
 	data-jquery-element="tooltip"
 	data-tooltip-side="top"
 	data-tooltip-followmouse="true"
-	data-tooltip-content-function="tooltipContent"
 ></div>
+
+<script>
+
+function lg( s ) { console.log( s ); }
+
+var
+	jqRect = $( ".abs.rect" )
+;
+
+jqRect.mousemove( function( e ) {
+	e = e.originalEvent;
+	this.dataset[ "tooltipContent" ] =
+		"Content dynamique&nbsp;:<br/>" +
+		"e.offsetX:<b>" + e.offsetX + "</b> e.offsetY:<b>" + e.offsetY + "</b><br/>"
+	;
+});
+
+jqRect.each( function() {
+	this._numberCount = 0;
+});
+
+setInterval( function() {
+	jqRect.each( function() {
+		++this._numberCount;
+		if ( this.dataset[ "tooltipContent" ] ) {
+			var
+				c = this.dataset[ "tooltipContent" ],
+				i = c.lastIndexOf( "<br/>" ) + "<br/>".length
+			;
+			this.dataset[ "tooltipContent" ] =
+				c.substr( 0, i ) + this._numberCount;
+		}
+	});
+}, 10 );
+
+</script>
 
 </body>
 </html>

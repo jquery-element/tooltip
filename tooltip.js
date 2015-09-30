@@ -8,30 +8,68 @@
 "use strict";
 
 var
-	jqWindow = $( window ),
+	jqDocument = $( document ),
 	jqTooltip = $( "<span class='tooltip tooltip-top'>" ),
 	jqTooltipArrow = $( "<div class='tooltip-arrow'>" ).appendTo( jqTooltip ),
 	jqTooltipContent = $( "<div class='tooltip-content'>" ).appendTo( jqTooltip ),
 	jqTooltip00 = jqTooltip.clone(),
 	jqTooltip00Content = jqTooltip00.find( ".tooltip-content" ),
 
+	elementX,
+	elementY,
+	mouseX,
+	mouseY,
 	tooltipX,
 	tooltipY,
 	tooltipW,
 	tooltipH,
 
+	isHidden = true,
 	arrowSize,
 	margin = 15,
 	currContent,
 	currSide = "top",
 	cssPosReset = { top: "auto", right: "auto", bottom: "auto", left: "auto" },
 	hidingDuration = 0,
-	timeoutId
+	timeoutIdHidding,
+	intervalIdWatchContent
 ;
 
+function showTooltip( jqEl, e ) {
+	e = e.originalEvent;
+	clearTimeout( timeoutIdHidding );
+
+	var
+		isFollow = isFollowingMouse( jqEl ),
+		offset = jqEl.offset()
+	;
+
+	elementX = offset.left;
+	elementY = offset.top;
+	mouseX = isFollow ? e.pageX - elementX : jqEl.outerWidth() / 2;
+	mouseY = isFollow ? e.pageY - elementY : jqEl.outerHeight() / 2;
+
+	function up() {
+		var content = getContent( jqEl );
+		if ( content && content !== currContent ) {
+			if ( isHidden ) {
+				isHidden = false;
+				jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
+			}
+			update( jqEl );
+		}
+	}
+
+	up();
+	intervalIdWatchContent = setInterval( up, 100 );
+}
+
 function hideTooltip() {
+	clearTimeout( intervalIdWatchContent );
 	jqTooltip.addClass( "tooltip-hiding" );
-	timeoutId = setTimeout( function() {
+	isHidden = true;
+	currContent = null;
+	timeoutIdHidding = setTimeout( function() {
 		jqTooltip.addClass( "tooltip-hidden" );
 	}, hidingDuration );
 }
@@ -51,12 +89,8 @@ $( function() {
 	hidingDuration = 1000 * parseFloat( jqTooltip.css( "transition-duration" ) );
 });
 
-function getContent( jqElem, e ) {
-	var c = jqElem[ 0 ].dataset[ "tooltipContentFunction" ];
-	return c
-		? window[ c ].call( jqElem, e )
-		: jqElem[ 0 ].dataset[ "tooltipContentString" ]
-	;
+function getContent( jqElem ) {
+	return jqElem[ 0 ].dataset[ "tooltipContent" ] || "";
 }
 
 function isFollowingMouse( jqEl ) {
@@ -76,12 +110,12 @@ function positionTooltip( x, y ) {
 		scr
 	;
 
-	tooltipX = x;
-	tooltipY = y;
+	tooltipX = x += elementX;
+	tooltipY = y += elementY;
 
 	if ( currSide === "top" || currSide === "bottom" ) {
 		prop = "left";
-		scr = jqWindow.width();
+		scr = jqDocument.width();
 		x = Math.min( Math.max( 0, x ), scr - tooltipW );
 		value = Math.min(
 			tooltipX + tooltipW / 2,
@@ -89,7 +123,7 @@ function positionTooltip( x, y ) {
 		) - x;
 	} else {
 		prop = "top";
-		scr = jqWindow.height();
+		scr = jqDocument.height();
 		y = Math.min( Math.max( 0, y ), scr - tooltipH );
 		value = Math.min(
 			tooltipY + tooltipH / 2,
@@ -106,17 +140,14 @@ function positionTooltip( x, y ) {
 	;
 }
 
-function update( jqEl, e ) {
+function update( jqEl ) {
 	var
-		cnt = getContent( jqEl, e ),
+		cnt = getContent( jqEl ),
 		contentChanged = cnt !== currContent,
 		side = getSide( jqEl ),
 		isFollow = isFollowingMouse( jqEl ),
-		offset = jqEl.offset(),
-		x = offset.left,
-		y = offset.top,
-		mouseX = isFollow ? e.originalEvent.offsetX : jqEl.outerWidth() / 2,
-		mouseY = isFollow ? e.originalEvent.offsetY : jqEl.outerHeight() / 2
+		x,
+		y
 	;
 
 	if ( contentChanged ) {
@@ -135,19 +166,17 @@ function update( jqEl, e ) {
 	}
 
 	if ( side === "top" || side === "bottom" ) {
-		x += mouseX - tooltipW / 2;
-		if ( side === "top" ) {
-			y -= margin + tooltipH;
-		} else {
-			y += margin + jqEl.outerHeight();
-		}
+		x = mouseX - tooltipW / 2;
+		y = side === "top"
+			? -margin - tooltipH
+			: margin + jqEl.outerHeight()
+		;
 	} else {
-		y += mouseY - tooltipH / 2;
-		if ( side === "left" ) {
-			x -= margin + tooltipW;
-		} else {
-			x += margin + jqEl.outerWidth();
-		}
+		y = mouseY - tooltipH / 2;
+		x = side === "left"
+			? -margin - tooltipW
+			: margin + jqEl.outerWidth()
+		;
 	}
 
 	positionTooltip( x, y );
@@ -155,12 +184,6 @@ function update( jqEl, e ) {
 	if ( contentChanged ) {
 		jqTooltipContent.html( currContent );
 	}
-}
-
-function showTooltip( event ) {
-	clearTimeout( timeoutId );
-	update( this, event );
-	jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
 }
 
 jQuery.element({
@@ -206,10 +229,13 @@ jQuery.element({
 			jqEl = this.jqElement
 		;
 		jqEl
-			.mouseenter( showTooltip.bind( jqEl ) )
+			.mouseenter( showTooltip.bind( null, jqEl ) )
 			.mouseleave( hideTooltip )
 			.mousemove( function( e ) {
 				if ( isFollowingMouse( jqEl ) ) {
+					e = e.originalEvent;
+					mouseX = e.pageX - elementX;
+					mouseY = e.pageY - elementY;
 					update( jqEl, e )
 				}
 			})
