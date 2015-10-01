@@ -1,5 +1,5 @@
 /*
-	tooltip - 1.0.0
+	tooltip - 1.0.1
 	https://github.com/jquery-element/tooltip
 */
 
@@ -237,7 +237,7 @@ jQuery.element({
 					e = e.originalEvent;
 					mouseX = e.pageX - elementX;
 					mouseY = e.pageY - elementY;
-					update( jqEl, e )
+					update( jqEl );
 				}
 			})
 		;
