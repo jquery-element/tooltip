@@ -14,6 +14,7 @@ var
 	jqTooltipContent = $( "<div class='tooltip-content'>" ).appendTo( jqTooltip ),
 	jqTooltip00 = jqTooltip.clone(),
 	jqTooltip00Content = jqTooltip00.find( ".tooltip-content" ),
+	jqElementCurrent,
 
 	elementX,
 	elementY,
@@ -37,10 +38,11 @@ var
 
 function showTooltip( jqEl, e ) {
 	e = e.originalEvent;
+	jqElementCurrent = jqEl;
 	clearTimeout( timeoutIdHidding );
 
 	var
-		isFollow = isFollowingMouse( jqEl ),
+		isFollow = isFollowingMouse(),
 		offset = jqEl.offset()
 	;
 
@@ -50,9 +52,9 @@ function showTooltip( jqEl, e ) {
 	mouseY = isFollow ? e.pageY - elementY : jqEl.outerHeight() / 2;
 
 	function up() {
-		var content = getContent( jqEl );
+		var content = getContent();
 		if ( content && content !== currContent ) {
-			update( jqEl );
+			update();
 		}
 	}
 
@@ -85,17 +87,17 @@ $( function() {
 	hidingDuration = 1000 * parseFloat( jqTooltip.css( "transition-duration" ) );
 });
 
-function getContent( jqElem ) {
-	return jqElem[ 0 ].dataset[ "tooltipContent" ] || "";
+function getContent() {
+	return jqElementCurrent[ 0 ].dataset[ "tooltipContent" ] || "";
 }
 
-function isFollowingMouse( jqEl ) {
-	var b = jqEl[ 0 ].dataset[ "tooltipFollowmouse" ];
+function isFollowingMouse() {
+	var b = jqElementCurrent[ 0 ].dataset[ "tooltipFollowmouse" ];
 	return b != null && b.toLowerCase() !== "false";
 }
 
-function getSide( jqEl ) {
-	var s = jqEl[ 0 ].dataset[ "tooltipSide" ];
+function getSide() {
+	var s = jqElementCurrent[ 0 ].dataset[ "tooltipSide" ];
 	return s && s.toLowerCase() || "top";
 }
 
@@ -136,12 +138,12 @@ function positionTooltip( x, y ) {
 	;
 }
 
-function update( jqEl ) {
+function update() {
 	var
-		cnt = getContent( jqEl ),
+		cnt = getContent(),
 		contentChanged = cnt !== currContent,
-		side = getSide( jqEl ),
-		isFollow = isFollowingMouse( jqEl ),
+		side = getSide(),
+		isFollow = isFollowingMouse(),
 		x,
 		y
 	;
@@ -170,13 +172,13 @@ function update( jqEl ) {
 		x = mouseX - tooltipW / 2;
 		y = side === "top"
 			? -margin - tooltipH
-			: margin + jqEl.outerHeight()
+			: margin + jqElementCurrent.outerHeight()
 		;
 	} else {
 		y = mouseY - tooltipH / 2;
 		x = side === "left"
 			? -margin - tooltipW
-			: margin + jqEl.outerWidth()
+			: margin + jqElementCurrent.outerWidth()
 		;
 	}
 
@@ -226,18 +228,15 @@ jQuery.element({
 		.tooltip-right  .tooltip-arrow { right  : 100% !important; }\
 	",
 	init: function() {
-		var
-			jqEl = this.jqElement
-		;
-		jqEl
-			.mouseenter( showTooltip.bind( null, jqEl ) )
+		this.jqElement
+			.mouseenter( showTooltip.bind( null, this.jqElement ) )
 			.mouseleave( hideTooltip )
 			.mousemove( function( e ) {
-				if ( isFollowingMouse( jqEl ) ) {
+				if ( isFollowingMouse() ) {
 					e = e.originalEvent;
 					mouseX = e.pageX - elementX;
 					mouseY = e.pageY - elementY;
-					update( jqEl );
+					update();
 				}
 			})
 		;
