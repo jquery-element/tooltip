@@ -124,17 +124,19 @@ var
 	jqRect = $( ".abs.rect" )
 ;
 
-jqRect.mousemove( function( e ) {
-	e = e.originalEvent;
-	this.dataset[ "tooltipContent" ] =
-		"Content dynamique&nbsp;:<br/>" +
-		"e.offsetX:<b>" + e.offsetX + "</b> e.offsetY:<b>" + e.offsetY + "</b><br/>&nbsp;"
-	;
-});
-
-jqRect.each( function() {
-	this._numberCount = 0;
-});
+jqRect
+	.each( function() {
+		this._numberCount = 0;
+	})
+	.mousemove( function( e ) {
+		e = e.originalEvent;
+		this._numberCount = 0;
+		this.dataset[ "tooltipContent" ] =
+			"Content dynamique&nbsp;:<br/>" +
+			"e.offsetX:<b>" + e.offsetX + "</b> e.offsetY:<b>" + e.offsetY + "</b><br/>&nbsp;"
+		;
+	})
+;
 
 setInterval( function() {
 	jqRect.each( function() {

@@ -25,6 +25,8 @@ var
 	tooltipW,
 	tooltipH,
 
+	mutation = new MutationObserver( update ),
+	mutationConfig = { attributes: true, attributeFilter: [ "data-tooltip-content" ] },
 	isHidden = true,
 	arrowSize,
 	margin = 15,
@@ -32,8 +34,7 @@ var
 	currSide = "top",
 	cssPosReset = { top: "auto", right: "auto", bottom: "auto", left: "auto" },
 	hidingDuration = 0,
-	timeoutIdHidding,
-	intervalIdWatchContent
+	timeoutIdHidding
 ;
 
 function showTooltip( jqEl, e ) {
@@ -43,27 +44,23 @@ function showTooltip( jqEl, e ) {
 
 	var
 		isFollow = isFollowingMouse(),
-		offset = jqEl.offset()
+		offset = jqEl.offset(),
+		content = getContent()
 	;
 
+	mutation.observe( jqEl[ 0 ], mutationConfig );
 	elementX = offset.left;
 	elementY = offset.top;
 	mouseX = isFollow ? e.pageX - elementX : jqEl.outerWidth() / 2;
 	mouseY = isFollow ? e.pageY - elementY : jqEl.outerHeight() / 2;
 
-	function up() {
-		var content = getContent();
-		if ( content && content !== currContent ) {
-			update();
-		}
+	if ( content && content !== currContent ) {
+		update();
 	}
-
-	up();
-	intervalIdWatchContent = setInterval( up, 100 );
 }
 
 function hideTooltip() {
-	clearTimeout( intervalIdWatchContent );
+	mutation.disconnect();
 	jqTooltip.addClass( "tooltip-hiding" );
 	isHidden = true;
 	currContent = "";
