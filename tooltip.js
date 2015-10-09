@@ -1,5 +1,5 @@
 /*
-	tooltip - 1.0.1
+	tooltip - 1.0.2
 	https://github.com/jquery-element/tooltip
 */
 
@@ -27,7 +27,7 @@ var
 
 	mutation = new MutationObserver( update ),
 	mutationConfig = { attributes: true, attributeFilter: [ "data-tooltip-content" ] },
-	isHidden = true,
+	isHidden,
 	arrowSize,
 	margin = 15,
 	currContent,
@@ -37,10 +37,28 @@ var
 	timeoutIdHidding
 ;
 
-function showTooltip( jqEl, e ) {
+function showTooltip() {
+	if ( isHidden ) {
+		isHidden = false;
+		clearTimeout( timeoutIdHidding );
+		jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
+	}
+}
+
+function hideTooltip() {
+	if ( !isHidden ) {
+		isHidden = true;
+		currContent = "";
+		jqTooltip.addClass( "tooltip-hiding" );
+		timeoutIdHidding = setTimeout( function() {
+			jqTooltip.addClass( "tooltip-hidden" );
+		}, hidingDuration );
+	}
+}
+
+function mouseEnter( jqEl, e ) {
 	e = e.originalEvent;
 	jqElementCurrent = jqEl;
-	clearTimeout( timeoutIdHidding );
 
 	var
 		isFollow = isFollowingMouse(),
@@ -55,18 +73,14 @@ function showTooltip( jqEl, e ) {
 	mouseY = isFollow ? e.pageY - elementY : jqEl.outerHeight() / 2;
 
 	if ( content && content !== currContent ) {
+		showTooltip();
 		update();
 	}
 }
 
-function hideTooltip() {
+function mouseLeave() {
 	mutation.disconnect();
-	jqTooltip.addClass( "tooltip-hiding" );
-	isHidden = true;
-	currContent = "";
-	timeoutIdHidding = setTimeout( function() {
-		jqTooltip.addClass( "tooltip-hidden" );
-	}, hidingDuration );
+	hideTooltip();
 }
 
 hideTooltip();
@@ -145,10 +159,12 @@ function update() {
 		y
 	;
 
-	if ( isHidden ) {
-		isHidden = false;
-		jqTooltip.removeClass( "tooltip-hiding tooltip-hidden" );
+	if ( !cnt ) {
+		hideTooltip();
+		return;
 	}
+
+	showTooltip();
 
 	if ( contentChanged ) {
 		jqTooltip00Content.html( currContent = cnt );
@@ -226,8 +242,8 @@ jQuery.element({
 	",
 	init: function() {
 		this.jqElement
-			.mouseenter( showTooltip.bind( null, this.jqElement ) )
-			.mouseleave( hideTooltip )
+			.mouseenter( mouseEnter.bind( null, this.jqElement ) )
+			.mouseleave( mouseLeave )
 			.mousemove( function( e ) {
 				if ( isFollowingMouse() ) {
 					e = e.originalEvent;
