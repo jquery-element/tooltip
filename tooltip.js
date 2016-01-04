@@ -8,7 +8,7 @@
 "use strict";
 
 var
-	jqDocument = $( document ),
+	jqWindow = $( window ),
 	jqTooltip = $( "<span class='tooltip tooltip-top'>" ),
 	jqTooltipArrow = $( "<div class='tooltip-arrow'>" ).appendTo( jqTooltip ),
 	jqTooltipContent = $( "<div class='tooltip-content'>" ).appendTo( jqTooltip ),
@@ -122,7 +122,7 @@ function positionTooltip( x, y ) {
 
 	if ( currSide === "top" || currSide === "bottom" ) {
 		prop = "left";
-		scr = jqDocument.width();
+		scr = jqWindow.width();
 		x = Math.min( Math.max( 0, x ), scr - tooltipW );
 		value = Math.min(
 			tooltipX + tooltipW / 2,
@@ -130,7 +130,7 @@ function positionTooltip( x, y ) {
 		) - x;
 	} else {
 		prop = "top";
-		scr = jqDocument.height();
+		scr = jqWindow.height();
 		y = Math.min( Math.max( 0, y ), scr - tooltipH );
 		value = Math.min(
 			tooltipY + tooltipH / 2,
