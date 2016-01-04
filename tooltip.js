@@ -1,5 +1,5 @@
 /*
-	tooltip - 1.0.2
+	tooltip - 1.1.0
 	https://github.com/jquery-element/tooltip
 */
 
@@ -14,23 +14,33 @@ var
 	jqTooltipContent = $( "<div class='tooltip-content'>" ).appendTo( jqTooltip ),
 	jqTooltip00 = jqTooltip.clone(),
 	jqTooltip00Content = jqTooltip00.find( ".tooltip-content" ),
-	jqElementCurrent,
+	jqElCurr,
 
 	elementX,
 	elementY,
-	mouseX,
-	mouseY,
+	mouseElemX,
+	mouseElemY,
+	mousePageX,
+	mousePageY,
 	tooltipX,
 	tooltipY,
 	tooltipW,
 	tooltipH,
 
 	mutation = new MutationObserver( update ),
-	mutationConfig = { attributes: true, attributeFilter: [ "data-tooltip-content" ] },
+	mutationConfig = {
+		attributes: true,
+		attributeFilter: [
+			"data-tooltip-content",
+			"data-tooltip-followmouse",
+			"data-tooltip-side"
+		]
+	},
 	isHidden,
 	arrowSize,
 	margin = 15,
 	currContent,
+	currIsFollow,
 	currSide = "top",
 	cssPosReset = { top: "auto", right: "auto", bottom: "auto", left: "auto" },
 	hidingDuration = 0,
@@ -57,24 +67,12 @@ function hideTooltip() {
 }
 
 function mouseEnter( jqEl, e ) {
-	e = e.originalEvent;
-	jqElementCurrent = jqEl;
-
-	var
-		isFollow = isFollowingMouse(),
-		offset = jqEl.offset(),
-		content = getContent()
-	;
-
+	jqElCurr = jqEl;
 	mutation.observe( jqEl[ 0 ], mutationConfig );
-	elementX = offset.left;
-	elementY = offset.top;
-	mouseX = isFollow ? e.pageX - elementX : jqEl.outerWidth() / 2;
-	mouseY = isFollow ? e.pageY - elementY : jqEl.outerHeight() / 2;
-
+	var content = getContent();
 	if ( content && content !== currContent ) {
 		showTooltip();
-		update();
+		update( e );
 	}
 }
 
@@ -99,16 +97,16 @@ $( function() {
 });
 
 function getContent() {
-	return jqElementCurrent[ 0 ].dataset[ "tooltipContent" ] || "";
+	return jqElCurr[ 0 ].dataset[ "tooltipContent" ] || "";
 }
 
 function isFollowingMouse() {
-	var b = jqElementCurrent[ 0 ].dataset[ "tooltipFollowmouse" ];
+	var b = jqElCurr[ 0 ].dataset[ "tooltipFollowmouse" ];
 	return b != null && b.toLowerCase() !== "false";
 }
 
 function getSide() {
-	var s = jqElementCurrent[ 0 ].dataset[ "tooltipSide" ];
+	var s = jqElCurr[ 0 ].dataset[ "tooltipSide" ];
 	return s && s.toLowerCase() || "top";
 }
 
@@ -155,6 +153,7 @@ function update() {
 		contentChanged = cnt !== currContent,
 		side = getSide(),
 		isFollow = isFollowingMouse(),
+		offset,
 		x,
 		y
 	;
@@ -165,6 +164,21 @@ function update() {
 	}
 
 	showTooltip();
+	if ( isFollow !== currIsFollow ) {
+		currIsFollow = isFollow;
+		if ( !isFollow ) {
+			mouseElemX = jqElCurr.outerWidth() / 2;
+			mouseElemY = jqElCurr.outerHeight() / 2;
+		}
+	}
+
+	offset = jqElCurr.offset();
+	elementX = offset.left;
+	elementY = offset.top;
+	if ( isFollow ) {
+		mouseElemX = mousePageX - elementX;
+		mouseElemY = mousePageY - elementY;
+	}
 
 	if ( contentChanged ) {
 		jqTooltip00Content.html( currContent = cnt );
@@ -182,16 +196,16 @@ function update() {
 	}
 
 	if ( side === "top" || side === "bottom" ) {
-		x = mouseX - tooltipW / 2;
+		x = mouseElemX - tooltipW / 2;
 		y = side === "top"
 			? -margin - tooltipH
-			: margin + jqElementCurrent.outerHeight()
+			: margin + jqElCurr.outerHeight()
 		;
 	} else {
-		y = mouseY - tooltipH / 2;
+		y = mouseElemY - tooltipH / 2;
 		x = side === "left"
 			? -margin - tooltipW
-			: margin + jqElementCurrent.outerWidth()
+			: margin + jqElCurr.outerWidth()
 		;
 	}
 
@@ -245,10 +259,10 @@ jQuery.element({
 			.mouseenter( mouseEnter.bind( null, this.jqElement ) )
 			.mouseleave( mouseLeave )
 			.mousemove( function( e ) {
+				e = e.originalEvent;
+				mousePageX = e.pageX;
+				mousePageY = e.pageY;
 				if ( isFollowingMouse() ) {
-					e = e.originalEvent;
-					mouseX = e.pageX - elementX;
-					mouseY = e.pageY - elementY;
 					update();
 				}
 			})
