@@ -1,5 +1,5 @@
 /*
-	tooltip - 1.1.0
+	tooltip - 1.1.1
 	https://github.com/jquery-element/tooltip
 */
 
@@ -9,7 +9,7 @@
 
 var
 	jqWindow = $( window ),
-	jqTooltip = $( "<span class='tooltip tooltip-top'>" ),
+	jqTooltip = $( "<span class='tooltip'>" ),
 	jqTooltipArrow = $( "<div class='tooltip-arrow'>" ).appendTo( jqTooltip ),
 	jqTooltipContent = $( "<div class='tooltip-content'>" ).appendTo( jqTooltip ),
 	jqTooltip00 = jqTooltip.clone(),
@@ -41,7 +41,7 @@ var
 	margin = 15,
 	currContent,
 	currIsFollow,
-	currSide = "top",
+	currSide,
 	cssPosReset = { top: "auto", right: "auto", bottom: "auto", left: "auto" },
 	hidingDuration = 0,
 	timeoutIdHidding
@@ -79,6 +79,7 @@ function mouseEnter( jqEl, e ) {
 function mouseLeave() {
 	mutation.disconnect();
 	hideTooltip();
+	currIsFollow = undefined;
 }
 
 hideTooltip();
