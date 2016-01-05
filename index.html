@@ -1,47 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8"/>
-<title>jquery-element: tooltip</title>
-<style>
-	body {
-		background: #222;
-		font: 12px sans-serif;
-		color: #ddd;
-	}
-	.abs {
-		position: absolute;
-	}
-	.rect {
-		background: #f33;
-		opacity: .8;
-	}
-	.rect:hover {
-		z-index: 1;
-		opacity: 1;
-	}
+	<meta charset="UTF-8"/>
+	<title>tooltip</title>
+	<script src="//code.jquery.com/jquery-3.0.0-alpha1.min.js"></script>
+	<script src="//jquery-element.github.io/jquery-element-1.7.0.js"></script>
+	<script src="//jquery-element.github.io/tooltip-1.1.1.js"></script>
+	<style>
+		body {
+			background: #222;
+			font: 12px sans-serif;
+			color: #ddd;
+		}
+		.abs {
+			position: absolute;
+		}
+		.rect {
+			background: #f33;
+			opacity: .8;
+		}
+		.rect:hover {
+			z-index: 1;
+			opacity: 1;
+		}
 
-	.directions {
-		position: absolute;
-		text-align: center;
-	}
-	.directions > div {
-		display: inline-block;
-		margin: 10px;
-		width: 50px;
-		padding: 10px;
-		font-weight: bold;
-		border-radius: 4px;
-		background: #ddf;
-		color: #222;
-		cursor: default;
-	}
-
-</style>
-<script src="//code.jquery.com/jquery-3.0.0-alpha1.min.js"></script>
-<script src="../jquery-element/jquery-element.js"></script>
-<script src="tooltip.js"></script>
-</head>	
+		.directions {
+			position: absolute;
+			text-align: center;
+		}
+		.directions > div {
+			display: inline-block;
+			margin: 10px;
+			width: 50px;
+			padding: 10px;
+			font-weight: bold;
+			border-radius: 4px;
+			background: #ddf;
+			color: #222;
+			cursor: default;
+		}
+	</style>
+</head>
 <body>
 
 <div class="directions" style="right: 250px; top: 40px;">
